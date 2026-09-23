@@ -48,16 +48,21 @@ may establish navigation prerequisites but do not duplicate RTK Query data.
 
 ## Data and Effect
 
-RTK Query owns server cache, request status, deduplication, polling, tags, and
-invalidation. Redux slices contain only durable cross-route client state; they
-do not mirror API resources. Forms stay in React Hook Form and transient UI
-state stays local.
+effect-atom owns granular UI state. Feature-owned `atoms/` modules contain
+primitive writable atoms and read-only derived atoms; the split is
+mandatory (ADR 0002). Cross-feature consumers read other features' atoms
+but never write them; writes go through the owning feature's exported
+actions.
 
-Effect owns asynchronous boundary programs: HTTP, response decoding, timeout,
-bounded retry, cancellation, and tagged error translation. Connect RTK Query's
-abort signal to Effect interruption. Do not retry permanent errors or mutations
-without a server-backed idempotency guarantee. Never add an Effect cache beside
-RTK Query.
+Effect owns asynchronous boundary programs: WS/RPC execution, schema
+decoding of untrusted payloads, timeout, bounded replay-safe retry,
+cancellation, and tagged error translation. Effect runs inside atom write
+handlers and a thin stream/RPC adapter. Effect values do not leak into
+JSX and do not create a second UI-state model.
+
+React Hook Form owns form state. URL parameters own shareable filters.
+React state owns local interaction. Server caches are not hand-rolled;
+one-shot reads use the RPC layer with explicit feature-owned invalidation.
 
 ## Accessibility and interaction
 

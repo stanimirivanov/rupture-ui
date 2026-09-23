@@ -69,7 +69,7 @@ milestone definitions remain authoritative in the backend repository.
 Read [AGENTS.md](AGENTS.md), [CONTRIBUTING.md](CONTRIBUTING.md), and the
 [engineering standards](docs/development/engineering-standards.md) before
 changing the workspace. Each change delivers one reviewable capability and is
-assigned to the existing Ergon milestone that owns that behavior.
+assigned to the existing Rupture milestone that owns that behavior.
 
 ## License
 
