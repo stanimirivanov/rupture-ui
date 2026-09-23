@@ -1,10 +1,20 @@
+import { RegistryProvider } from '@effect-atom/atom-react';
 import { fireEvent, render, screen } from '@testing-library/react';
 
+import { viewModeAtom } from '../atoms/view-mode';
 import { ViewModeToggle } from './view-mode-toggle';
+
+function renderToggle() {
+  return render(
+    <RegistryProvider initialValues={[[viewModeAtom, '2d']]}>
+      <ViewModeToggle />
+    </RegistryProvider>,
+  );
+}
 
 describe('ViewModeToggle', () => {
   it('renders a labelled toggle group with 2D pressed by default', () => {
-    render(<ViewModeToggle />);
+    renderToggle();
 
     expect(screen.getByRole('group', { name: 'View mode' })).toBeTruthy();
     expect(
@@ -16,7 +26,7 @@ describe('ViewModeToggle', () => {
   });
 
   it('switches the pressed state when 3D is clicked', () => {
-    render(<ViewModeToggle />);
+    renderToggle();
 
     fireEvent.click(screen.getByRole('button', { name: '3D' }));
 
@@ -29,7 +39,7 @@ describe('ViewModeToggle', () => {
   });
 
   it('announces the current mode through a status region', () => {
-    render(<ViewModeToggle />);
+    renderToggle();
 
     expect(screen.getByRole('status').textContent).toBe('2D view');
 

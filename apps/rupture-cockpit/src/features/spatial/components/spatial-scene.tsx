@@ -3,23 +3,27 @@ import { useMemo } from 'react';
 
 import type { Severity } from '../../canvas/atoms/dials';
 import type { LaidOutTopology } from '../../canvas/atoms/topology';
+import {
+  NODE_DEPTH_3D,
+  NODE_HEIGHT_3D,
+  NODE_WIDTH_3D,
+  SCALE,
+  type CameraFrame,
+} from '../lib/frame-camera';
 import { readCssColor } from '../lib/theme-color';
-
-const SCALE = 0.01;
-const NODE_WIDTH_3D = 180 * SCALE;
-const NODE_HEIGHT_3D = 64 * SCALE;
-const NODE_DEPTH_3D = NODE_HEIGHT_3D * 0.6;
 
 export interface SpatialSceneProps {
   readonly layout: LaidOutTopology;
   readonly focusedNodeId: string | null;
   readonly severities: ReadonlyMap<string, Severity>;
+  readonly frame: CameraFrame;
 }
 
 export function SpatialScene({
   layout,
   focusedNodeId,
   severities,
+  frame,
 }: SpatialSceneProps) {
   const palette = useMemo(
     () => ({
@@ -35,33 +39,6 @@ export function SpatialScene({
     [],
   );
 
-  const { center, distance } = useMemo(() => {
-    if (layout.nodes.length === 0) {
-      return { center: [0, 0, 0] as const, distance: 10 };
-    }
-    let minX = Infinity;
-    let maxX = -Infinity;
-    let minY = Infinity;
-    let maxY = -Infinity;
-    for (const node of layout.nodes) {
-      minX = Math.min(minX, node.x);
-      maxX = Math.max(maxX, node.x);
-      minY = Math.min(minY, node.y);
-      maxY = Math.max(maxY, node.y);
-    }
-    const width = (maxX - minX) * SCALE;
-    const depth = (maxY - minY) * SCALE;
-    const size = Math.max(width, depth, NODE_WIDTH_3D * 3);
-    return {
-      center: [
-        ((minX + maxX) / 2) * SCALE,
-        0,
-        ((minY + maxY) / 2) * SCALE,
-      ] as const,
-      distance: size * 1.4,
-    };
-  }, [layout.nodes]);
-
   const nodesById = useMemo(
     () => new Map(layout.nodes.map((node) => [node.service.id, node])),
     [layout.nodes],
@@ -74,8 +51,9 @@ export function SpatialScene({
       <OrbitControls
         enablePan={false}
         makeDefault
-        target={[center[0], center[1], center[2]]}
+        target={[frame.target[0], frame.target[1], frame.target[2]]}
       />
+
       {layout.nodes.map(({ service, x, y }) => {
         const isFocused = service.id === focusedNodeId;
         return (
@@ -104,6 +82,7 @@ export function SpatialScene({
           </group>
         );
       })}
+
       {layout.edges.map(({ connection }) => {
         const source = nodesById.get(connection.source);
         const target = nodesById.get(connection.target);
@@ -124,9 +103,17 @@ export function SpatialScene({
           />
         );
       })}
-      <mesh position={[center[0], -0.4, center[2]]} rotation={[-Math.PI / 2, 0, 0]}>
-        <planeGeometry args={[distance * 4, distance * 4]} />
-        <meshStandardMaterial color={palette.surface} opacity={0.15} transparent />
+
+      <mesh
+        position={[frame.target[0], -0.4, frame.target[2]]}
+        rotation={[-Math.PI / 2, 0, 0]}
+      >
+        <planeGeometry args={[frame.groundSize, frame.groundSize]} />
+        <meshStandardMaterial
+          color={palette.surface}
+          opacity={0.15}
+          transparent
+        />
       </mesh>
     </group>
   );

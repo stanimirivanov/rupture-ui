@@ -30,7 +30,7 @@ export function TopologyRoute() {
         </div>
         <ViewModeToggle />
       </header>
-      <div className="min-h-0 flex-1">
+      <div className="relative min-h-0 flex-1">
         {viewMode === '2d' ? (
           <TopologyCanvas />
         ) : (
@@ -44,7 +44,9 @@ export function TopologyRoute() {
               </div>
             }
           >
-            <SpatialView />
+            <div className="absolute inset-0">
+              <SpatialView />
+            </div>
           </Suspense>
         )}
       </div>
