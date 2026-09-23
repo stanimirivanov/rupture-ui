@@ -35,15 +35,15 @@ and no native app.
 
 ## Milestone sequence
 
-| Milestone | Outcome                                 | Status   |
-| :-------- | :-------------------------------------- | :------- |
-| M01       | Verified foundation                     | Complete |
-| M02       | Topology canvas                         | Next     |
-| M03       | Agentic proposals                       | Planned  |
-| M04       | Live cockpit                            | Planned  |
-| M05       | Replay and change points                | Planned  |
-| M06       | Accessibility and visual identity pass  | Planned  |
-| M07       | Demo and engine-integration handoff     | Planned  |
+| Milestone | Outcome                                | Status   |
+| :-------- | :------------------------------------- | :------- |
+| M01       | Verified foundation                    | Complete |
+| M02       | Topology canvas                        | Next     |
+| M03       | Agentic proposals                      | Planned  |
+| M04       | Live cockpit                           | Planned  |
+| M05       | Replay and change points               | Planned  |
+| M06       | Accessibility and visual identity pass | Planned  |
+| M07       | Demo and engine-integration handoff    | Planned  |
 
 Milestone outcomes are defined by the Rupture core repository. This table
 maps the UI workspace's slices to those milestones; it does not define
@@ -99,18 +99,18 @@ this workspace.
 
 ## Trend-to-milestone map
 
-| #  | Trend                            | UI capability                                                | Milestone |
-| :- | :------------------------------- | :----------------------------------------------------------- | :-------- |
-| 1  | Generative and adaptive UI       | Cockpit mode restructures panels by severity                 | M04       |
-| 2  | Intent-driven and agentic UX     | Hypothesis feed, reasoning chain, autonomy dial              | M03       |
-| 3  | Multimodal interfaces            | ⌘K palette, hotkeys, and voice through one CommandBus        | M04       |
-| 4  | Graphical-first interaction      | React Flow canvas; nozzles dragged onto wires                | M02       |
-| 5  | Accessibility-first              | WCAG 2.2 AA gate; keyboard-only Playwright suite             | M02, M06  |
-| 6  | Purposeful motion                | Physics-based micro-interactions; reduced-motion token       | M02, M06  |
-| 7  | Liquid glass visuals             | Glass drawers, kill-switch overlay, specular depth           | M04       |
-| 8  | Spatial interfaces               | Read-only 3D mirror of the 2D graph                          | M02       |
-| 9  | Data storytelling                | Change-point narrative, timeline scrubber, story beats       | M05       |
-| 10 | Neo-brutalism / bold expressive  | Industrial type, thick borders, high-contrast badge system   | M06       |
+| #   | Trend                           | UI capability                                              | Milestone |
+| :-- | :------------------------------ | :--------------------------------------------------------- | :-------- |
+| 1   | Generative and adaptive UI      | Cockpit mode restructures panels by severity               | M04       |
+| 2   | Intent-driven and agentic UX    | Hypothesis feed, reasoning chain, autonomy dial            | M03       |
+| 3   | Multimodal interfaces           | ⌘K palette, hotkeys, and voice through one CommandBus      | M04       |
+| 4   | Graphical-first interaction     | React Flow canvas; nozzles dragged onto wires              | M02       |
+| 5   | Accessibility-first             | WCAG 2.2 AA gate; keyboard-only Playwright suite           | M02, M06  |
+| 6   | Purposeful motion               | Physics-based micro-interactions; reduced-motion token     | M02, M06  |
+| 7   | Liquid glass visuals            | Glass drawers, kill-switch overlay, specular depth         | M04       |
+| 8   | Spatial interfaces              | Read-only 3D mirror of the 2D graph                        | M02       |
+| 9   | Data storytelling               | Change-point narrative, timeline scrubber, story beats     | M05       |
+| 10  | Neo-brutalism / bold expressive | Industrial type, thick borders, high-contrast badge system | M06       |
 
 ## Structural and transient layers
 

@@ -58,9 +58,8 @@ ADR 0002.
   style, icon, or accessible description) in addition to color and
   animation. This is required by `AGENTS.md` § React and TypeScript and by
   `docs/architecture.md` § Presentation.
-- All graph model mutations flow through effect-atom source atoms per ADR
-  0002. React Flow is mounted with controlled props driven from atoms,
-        never with its internal store as a source of truth.
+- All graph model mutations flow through effect-atom source atoms per ADR 0002. React Flow is mounted with controlled props driven from atoms,
+  never with its internal store as a source of truth.
 
 ## Consequences
 
