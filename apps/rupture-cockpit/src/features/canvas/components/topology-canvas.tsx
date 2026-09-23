@@ -71,18 +71,49 @@ export function TopologyCanvas() {
     NozzleEdge
   > | null>(null);
 
+  const handleInit = useCallback(
+    (instance: ReactFlowInstance<ServiceNode, NozzleEdge>) => {
+      rfInstanceRef.current = instance;
+
+      // React Flow finishes its mount-time setup before onInit fires, so a
+      // focus call here is not stolen by the library's own initialization.
+      // `focusedNodeIdAtom` is keep-alive; the value survives the unmount
+      // gap when the 3D view was selected.
+      const id = focusedId;
+      if (!id) return;
+      containerRef.current
+        ?.querySelector<HTMLElement>(`[data-service-node="${id}"]`)
+        ?.focus();
+    },
+    [focusedId],
+  );
+
+  // Stable identity: React Flow memoizes nodes by data reference. A new
+  // function here on every render would re-render every node on every
+  // unrelated state change.
+  const handleNodeFocus = useCallback(
+    (id: string) => {
+      setFocusedId(id);
+    },
+    [setFocusedId],
+  );
+
   const nodes: ServiceNode[] = useMemo(
     () =>
       layout.nodes.map(({ service, x, y }) => ({
         id: service.id,
         type: 'service',
         position: { x, y },
-        data: { label: service.label, isTabStop: service.id === tabStopId },
+        data: {
+          label: service.label,
+          isTabStop: service.id === tabStopId,
+          onFocus: handleNodeFocus,
+        },
         draggable: false,
         connectable: false,
         selectable: false,
       })),
-    [layout.nodes, tabStopId],
+    [layout.nodes, tabStopId, handleNodeFocus],
   );
 
   const edges: NozzleEdge[] = useMemo(
@@ -229,9 +260,7 @@ export function TopologyCanvas() {
           elementsSelectable={false}
           fitView
           proOptions={{ hideAttribution: true }}
-          onInit={(instance) => {
-            rfInstanceRef.current = instance;
-          }}
+          onInit={handleInit}
           onDragOver={handleDragOver}
           onDrop={handleDrop}
         >

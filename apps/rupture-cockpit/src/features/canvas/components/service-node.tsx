@@ -3,6 +3,7 @@ import { Handle, Position, type Node, type NodeProps } from '@xyflow/react';
 export interface ServiceNodeData extends Record<string, unknown> {
   readonly label: string;
   readonly isTabStop: boolean;
+  readonly onFocus: (id: string) => void;
 }
 
 export type ServiceNode = Node<ServiceNodeData, 'service'>;
@@ -14,6 +15,7 @@ export function ServiceNodeComponent({ id, data }: NodeProps<ServiceNode>) {
       tabIndex={data.isTabStop ? 0 : -1}
       role="button"
       aria-label={data.label}
+      onFocus={() => data.onFocus(id)}
       className="rounded-lg border-2 border-border bg-surface-strong px-4 py-3 text-sm font-semibold text-ink shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-canvas"
     >
       {data.label}
