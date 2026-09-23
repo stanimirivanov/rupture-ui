@@ -71,3 +71,33 @@ a {
     scroll-behavior: auto;
   }
 }
+
+/* Packet-flow on edges that carry a nozzle. The dash pattern is the static
+   non-color severity signal (B4); this animation adds motion on top. The
+   offset period (60) is the LCM of the three dash cycles (10, 12, 5), so
+   the loop is seamless for every severity. */
+@keyframes rupture-edge-flow {
+  to {
+    stroke-dashoffset: -60;
+  }
+}
+
+.edge-flow-ok {
+  animation: rupture-edge-flow 3s linear infinite;
+}
+
+.edge-flow-warning {
+  animation: rupture-edge-flow 1.5s linear infinite;
+}
+
+.edge-flow-critical {
+  animation: rupture-edge-flow 0.75s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .edge-flow-ok,
+  .edge-flow-warning,
+  .edge-flow-critical {
+    animation: none;
+  }
+}
