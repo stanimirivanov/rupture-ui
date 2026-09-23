@@ -35,6 +35,7 @@ import {
   withNozzle,
   type NozzleKind,
 } from '../atoms/nozzles';
+import { edgeSeverityAtom } from '../atoms/dials';
 import {
   NODE_HEIGHT,
   NODE_WIDTH,
@@ -42,6 +43,7 @@ import {
 } from '../atoms/topology';
 import { EdgePickerDialog } from './edge-picker-dialog';
 import { NodeDetailsPanel } from './node-details-panel';
+import { NozzleList } from './nozzle-list';
 import { NozzleEdgeComponent, type NozzleEdge } from './nozzle-edge';
 import { NozzlePalette } from './nozzle-palette';
 import { ServiceNodeComponent, type ServiceNode } from './service-node';
@@ -61,6 +63,7 @@ export function TopologyCanvas() {
   const nozzlesByEdge = useAtomValue(nozzlesByEdgeAtom);
   const [pendingKind, setPendingKind] = useAtom(pendingPlacementKindAtom);
   const edgeDescriptors = useAtomValue(edgeDescriptorsAtom);
+  const severities = useAtomValue(edgeSeverityAtom);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const rfInstanceRef = useRef<ReactFlowInstance<
@@ -89,10 +92,13 @@ export function TopologyCanvas() {
         source: connection.source,
         target: connection.target,
         type: 'nozzle',
-        data: { nozzle: nozzlesByEdge.get(connection.id) ?? null },
+        data: {
+          nozzle: nozzlesByEdge.get(connection.id) ?? null,
+          severity: severities.get(connection.id) ?? 'ok',
+        },
         selectable: false,
       })),
-    [layout.edges, nozzlesByEdge],
+    [layout.edges, nozzlesByEdge, severities],
   );
 
   const focusNode = useCallback((id: string) => {
@@ -240,7 +246,13 @@ export function TopologyCanvas() {
         ) : null}
       </div>
 
-      <NozzlePalette onRequestPlacement={(kind) => setPendingKind(kind)} />
+      <aside
+        aria-label="Nozzles"
+        className="flex w-72 shrink-0 flex-col gap-6 overflow-y-auto border-l border-border bg-surface/80 p-4"
+      >
+        <NozzlePalette onRequestPlacement={(kind) => setPendingKind(kind)} />
+        <NozzleList />
+      </aside>
 
       {pendingKind ? (
         <EdgePickerDialog

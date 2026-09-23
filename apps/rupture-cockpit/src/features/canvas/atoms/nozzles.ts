@@ -124,3 +124,10 @@ export function withNozzle(
 ): readonly Nozzle[] {
   return [...nozzles.filter((nozzle) => nozzle.edgeId !== next.edgeId), next];
 }
+
+/**
+ * Writable: nozzle whose dial is expanded in the sidebar, or `null` when no
+ * dial is open. Stale ids (a replaced nozzle) simply match no list item and
+ * result in nothing being expanded.
+ */
+export const selectedNozzleIdAtom = Atom.make<string | null>(null);

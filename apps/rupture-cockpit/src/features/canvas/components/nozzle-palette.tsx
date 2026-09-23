@@ -10,10 +10,7 @@ export interface NozzlePaletteProps {
 
 export function NozzlePalette({ onRequestPlacement }: NozzlePaletteProps) {
   return (
-    <aside
-      aria-label="Nozzle palette"
-      className="w-64 shrink-0 border-l border-border bg-surface/80 p-4"
-    >
+    <section aria-label="Nozzle palette">
       <h2 className="font-display text-sm tracking-tight">Nozzles</h2>
       <p className="mt-1 text-xs leading-5 text-ink-muted">
         Drag onto a connection, or activate an item to pick one.
@@ -41,6 +38,6 @@ export function NozzlePalette({ onRequestPlacement }: NozzlePaletteProps) {
           </li>
         ))}
       </ul>
-    </aside>
+    </section>
   );
 }
