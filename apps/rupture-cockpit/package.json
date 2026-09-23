@@ -11,7 +11,11 @@
     "@rupture/ui-web": "workspace:*",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "react-router": "catalog:"
+    "react-router": "catalog:",
+    "@dagrejs/dagre": "3.1.1",
+    "@effect-atom/atom-react": "0.7.0",
+    "@xyflow/react": "12.11.6",
+    "effect": "3.22.2"
   },
   "nx": {
     "tags": [

@@ -1,8 +1,12 @@
 import { Button } from '@rupture/ui-web';
+import { Link } from 'react-router';
 
 export function NotFound() {
   return (
-    <main className="grid min-h-screen place-items-center px-6 text-center">
+    <main
+      id="main-content"
+      className="grid flex-1 place-items-center px-6 py-24 text-center"
+    >
       <div>
         <p className="text-sm font-bold tracking-[0.18em] text-accent-strong uppercase">
           404 · Route not found
@@ -14,7 +18,7 @@ export function NotFound() {
           The requested location is not part of the current resolver experience.
         </p>
         <Button asChild className="mt-8">
-          <a href="/">Return to the cockpit</a>
+          <Link to="/">Return to the cockpit</Link>
         </Button>
       </div>
     </main>
