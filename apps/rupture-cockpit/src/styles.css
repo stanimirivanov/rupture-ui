@@ -1,0 +1,73 @@
+@import 'tailwindcss';
+
+/* Tailwind ignores external workspace packages unless their sources are explicit. */
+@source '../../../packages/ui-web/src';
+
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-surface-strong: var(--surface-strong);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-highlight: var(--highlight);
+  --color-severity-ok: var(--severity-ok);
+  --color-severity-warning: var(--severity-warning);
+  --color-severity-critical: var(--severity-critical);
+  --font-sans: 'Manrope', 'Aptos', 'Segoe UI', sans-serif;
+  --font-display:
+    'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+}
+
+:root {
+  color-scheme: dark;
+  --canvas: #0c0f0d;
+  --surface: #141815;
+  --surface-strong: #1d221e;
+  --ink: #edf1ec;
+  --ink-muted: #93a095;
+  --border: #2e362f;
+  --accent: #e8b04b;
+  --accent-strong: #f0c470;
+  --highlight: #e5484d;
+  --severity-ok: #4ade80;
+  --severity-warning: #e8b04b;
+  --severity-critical: #e5484d;
+}
+
+* {
+  border-color: var(--border);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  background:
+    radial-gradient(circle at 85% 0%, rgb(232 176 75 / 8%), transparent 26rem),
+    linear-gradient(180deg, #0e120f 0%, var(--canvas) 75%);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  text-rendering: optimizeLegibility;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+::selection {
+  background: rgb(232 176 75 / 25%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
