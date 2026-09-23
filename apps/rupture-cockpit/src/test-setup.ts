@@ -1,7 +1,9 @@
+import { vi } from 'vitest';
+
 class ResizeObserverStub {
-  observe() {}
-  unobserve() {}
-  disconnect() {}
+  observe = vi.fn();
+  unobserve = vi.fn();
+  disconnect = vi.fn();
 }
 
 if (!('ResizeObserver' in globalThis)) {
