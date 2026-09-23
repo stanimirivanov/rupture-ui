@@ -36,10 +36,7 @@ export function TopologyRoute() {
         ) : (
           <Suspense
             fallback={
-              <div
-                role="status"
-                className="grid h-full place-items-center text-sm text-ink-muted"
-              >
+              <div className="grid h-full place-items-center text-sm text-ink-muted">
                 Loading 3D view…
               </div>
             }

@@ -16,21 +16,22 @@ export function SpatialView() {
   const frame = useMemo(() => computeCameraFrame(layout), [layout]);
 
   return (
-    <Canvas
-      aria-label="3D topology view"
-      camera={{
-        position: [frame.position[0], frame.position[1], frame.position[2]],
-        fov: 45,
-      }}
-      dpr={[1, 2]}
-      className="h-full w-full"
-    >
-      <SpatialScene
-        layout={layout}
-        focusedNodeId={focusedId}
-        severities={severities}
-        frame={frame}
-      />
-    </Canvas>
+    <div role="img" aria-label="3D topology view" className="h-full w-full">
+      <Canvas
+        camera={{
+          position: [frame.position[0], frame.position[1], frame.position[2]],
+          fov: 45,
+        }}
+        dpr={[1, 2]}
+        className="h-full w-full"
+      >
+        <SpatialScene
+          layout={layout}
+          focusedNodeId={focusedId}
+          severities={severities}
+          frame={frame}
+        />
+      </Canvas>
+    </div>
   );
 }

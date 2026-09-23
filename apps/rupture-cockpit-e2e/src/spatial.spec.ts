@@ -62,3 +62,37 @@ test('3D view has no axe violations', async ({ page }) => {
 
   await expectNoAxeViolations(page);
 });
+
+test('preserves placed nozzles and dial values across a view toggle', async ({
+  page,
+}) => {
+  await page.goto('/topology');
+
+  await page.getByRole('button', { name: /Latency Injector/ }).click();
+  await page
+    .getByRole('dialog')
+    .getByRole('button', { name: 'API Gateway to Checkout' })
+    .click();
+
+  const item = page.getByRole('button', {
+    name: /Latency Injector.*API Gateway to Checkout/,
+  });
+  await item.click();
+  const slider = page.getByRole('slider', { name: 'Strength' });
+  await slider.fill('80');
+  await expect(
+    page.getByRole('img', {
+      name: 'Latency Injector nozzle, critical severity',
+    }),
+  ).toBeVisible();
+
+  await page.getByRole('button', { name: '3D' }).click();
+  await page.getByRole('button', { name: '2D' }).click();
+
+  await expect(
+    page.getByRole('img', {
+      name: 'Latency Injector nozzle, critical severity',
+    }),
+  ).toBeVisible();
+  await expect(item).toContainText('Critical');
+});
