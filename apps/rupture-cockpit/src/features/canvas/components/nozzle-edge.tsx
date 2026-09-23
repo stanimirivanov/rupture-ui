@@ -26,11 +26,21 @@ const SEVERITY_STROKE: Readonly<Record<Severity, string>> = {
   critical: 'var(--severity-critical)',
 };
 
-/** Non-color severity signal. `ok` is solid; higher severities dash. */
-const SEVERITY_DASH: Readonly<Record<Severity, string | undefined>> = {
-  ok: undefined,
+/**
+ * Non-color severity signal. Dash density rises with severity. `ok` is
+ * dashed rather than solid so the flow animation (B5) has segments to move;
+ * without a nozzle, no severity class is applied and the edge stays solid.
+ */
+const SEVERITY_DASH: Readonly<Record<Severity, string>> = {
+  ok: '4 6',
   warning: '8 4',
   critical: '2 3',
+};
+
+const SEVERITY_FLOW_CLASS: Readonly<Record<Severity, string>> = {
+  ok: 'edge-flow-ok',
+  warning: 'edge-flow-warning',
+  critical: 'edge-flow-critical',
 };
 
 export function NozzleEdgeComponent({
@@ -60,6 +70,7 @@ export function NozzleEdgeComponent({
       <BaseEdge
         id={id}
         path={edgePath}
+        className={nozzle ? SEVERITY_FLOW_CLASS[severity] : undefined}
         style={{
           stroke: SEVERITY_STROKE[severity],
           strokeDasharray: SEVERITY_DASH[severity],
