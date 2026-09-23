@@ -6,6 +6,7 @@ import {
   type EdgeProps,
 } from '@xyflow/react';
 
+import type { Severity } from '../atoms/dials';
 import {
   NOZZLE_KIND_LABELS,
   NOZZLE_KIND_SHORT_LABELS,
@@ -14,9 +15,23 @@ import {
 
 export interface NozzleEdgeData extends Record<string, unknown> {
   readonly nozzle: Nozzle | null;
+  readonly severity: Severity;
 }
 
 export type NozzleEdge = Edge<NozzleEdgeData, 'nozzle'>;
+
+const SEVERITY_STROKE: Readonly<Record<Severity, string>> = {
+  ok: 'var(--border)',
+  warning: 'var(--severity-warning)',
+  critical: 'var(--severity-critical)',
+};
+
+/** Non-color severity signal. `ok` is solid; higher severities dash. */
+const SEVERITY_DASH: Readonly<Record<Severity, string | undefined>> = {
+  ok: undefined,
+  warning: '8 4',
+  critical: '2 3',
+};
 
 export function NozzleEdgeComponent({
   id,
@@ -38,15 +53,23 @@ export function NozzleEdgeComponent({
   });
 
   const nozzle = data?.nozzle ?? null;
+  const severity = data?.severity ?? 'ok';
 
   return (
     <>
-      <BaseEdge id={id} path={edgePath} />
+      <BaseEdge
+        id={id}
+        path={edgePath}
+        style={{
+          stroke: SEVERITY_STROKE[severity],
+          strokeDasharray: SEVERITY_DASH[severity],
+        }}
+      />
       {nozzle ? (
         <EdgeLabelRenderer>
           <span
             role="img"
-            aria-label={`${NOZZLE_KIND_LABELS[nozzle.kind]} nozzle`}
+            aria-label={`${NOZZLE_KIND_LABELS[nozzle.kind]} nozzle, ${severity} severity`}
             style={{
               transform: `translate(-50%, -50%) translate(${labelX}px, ${labelY}px)`,
             }}
