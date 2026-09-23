@@ -20,9 +20,9 @@ describe('layoutTopology', () => {
     const byId = new Map(result.nodes.map((n) => [n.service.id, n]));
     const gateway = byId.get('gateway');
     const checkout = byId.get('checkout');
-    expect(gateway).toBeDefined();
-    expect(checkout).toBeDefined();
-    expect(gateway!.x).toBeLessThan(checkout!.x);
+    assert(gateway, 'fixture must include at least one gateway');
+    assert(checkout, 'fixture must include at least one checkout');
+    expect(gateway.x).toBeLessThan(checkout.x);
   });
 
   it('is deterministic across repeated calls', () => {

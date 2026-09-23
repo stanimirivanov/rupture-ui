@@ -3,10 +3,17 @@ import {
   Background,
   Controls,
   ReactFlow,
-  type Edge,
+  type EdgeTypes,
   type NodeTypes,
+  type ReactFlowInstance,
 } from '@xyflow/react';
-import { useCallback, useMemo, useRef, type KeyboardEvent } from 'react';
+import {
+  useCallback,
+  useMemo,
+  useRef,
+  type DragEvent,
+  type KeyboardEvent,
+} from 'react';
 import '@xyflow/react/dist/style.css';
 
 import {
@@ -17,11 +24,32 @@ import {
   nodeDetailsOpenAtom,
   tabStopNodeIdAtom,
 } from '../atoms/focus';
-import { laidOutTopologyAtom } from '../atoms/topology';
+import {
+  NOZZLE_DRAG_MIME,
+  createNozzle,
+  edgeDescriptorsAtom,
+  isNozzleKind,
+  nozzlesAtom,
+  nozzlesByEdgeAtom,
+  pendingPlacementKindAtom,
+  withNozzle,
+  type NozzleKind,
+} from '../atoms/nozzles';
+import {
+  NODE_HEIGHT,
+  NODE_WIDTH,
+  laidOutTopologyAtom,
+} from '../atoms/topology';
+import { EdgePickerDialog } from './edge-picker-dialog';
 import { NodeDetailsPanel } from './node-details-panel';
+import { NozzleEdgeComponent, type NozzleEdge } from './nozzle-edge';
+import { NozzlePalette } from './nozzle-palette';
 import { ServiceNodeComponent, type ServiceNode } from './service-node';
 
 const nodeTypes: NodeTypes = { service: ServiceNodeComponent };
+const edgeTypes: EdgeTypes = { nozzle: NozzleEdgeComponent };
+
+const EDGE_DROP_THRESHOLD = 80;
 
 export function TopologyCanvas() {
   const layout = useAtomValue(laidOutTopologyAtom);
@@ -29,7 +57,16 @@ export function TopologyCanvas() {
   const tabStopId = useAtomValue(tabStopNodeIdAtom);
   const [focusedId, setFocusedId] = useAtom(focusedNodeIdAtom);
   const [detailsOpen, setDetailsOpen] = useAtom(nodeDetailsOpenAtom);
+  const [, setNozzles] = useAtom(nozzlesAtom);
+  const nozzlesByEdge = useAtomValue(nozzlesByEdgeAtom);
+  const [pendingKind, setPendingKind] = useAtom(pendingPlacementKindAtom);
+  const edgeDescriptors = useAtomValue(edgeDescriptorsAtom);
+
   const containerRef = useRef<HTMLDivElement>(null);
+  const rfInstanceRef = useRef<ReactFlowInstance<
+    ServiceNode,
+    NozzleEdge
+  > | null>(null);
 
   const nodes: ServiceNode[] = useMemo(
     () =>
@@ -45,15 +82,17 @@ export function TopologyCanvas() {
     [layout.nodes, tabStopId],
   );
 
-  const edges: Edge[] = useMemo(
+  const edges: NozzleEdge[] = useMemo(
     () =>
       layout.edges.map(({ connection }) => ({
         id: connection.id,
         source: connection.source,
         target: connection.target,
+        type: 'nozzle',
+        data: { nozzle: nozzlesByEdge.get(connection.id) ?? null },
         selectable: false,
       })),
-    [layout.edges],
+    [layout.edges, nozzlesByEdge],
   );
 
   const focusNode = useCallback((id: string) => {
@@ -99,35 +138,116 @@ export function TopologyCanvas() {
     [order, focusedId, focusNode, setFocusedId, setDetailsOpen],
   );
 
+  const placeNozzle = useCallback(
+    (kind: NozzleKind, edgeId: string) => {
+      setNozzles((current) => withNozzle(current, createNozzle(kind, edgeId)));
+      setPendingKind(null);
+    },
+    [setNozzles, setPendingKind],
+  );
+
+  const findNearestEdgeId = useCallback(
+    (point: { x: number; y: number }): string | null => {
+      const nodesById = new Map(
+        layout.nodes.map((node) => [node.service.id, node]),
+      );
+      let bestId: string | null = null;
+      let bestDistance = EDGE_DROP_THRESHOLD;
+
+      for (const { connection } of layout.edges) {
+        const source = nodesById.get(connection.source);
+        const target = nodesById.get(connection.target);
+        if (!source || !target) continue;
+
+        const midX = (source.x + NODE_WIDTH + target.x) / 2;
+        const midY =
+          (source.y + NODE_HEIGHT / 2 + target.y + NODE_HEIGHT / 2) / 2;
+        const distance = Math.hypot(point.x - midX, point.y - midY);
+
+        if (distance < bestDistance) {
+          bestDistance = distance;
+          bestId = connection.id;
+        }
+      }
+
+      return bestId;
+    },
+    [layout.edges, layout.nodes],
+  );
+
+  const handleDragOver = useCallback((event: DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'copy';
+  }, []);
+
+  const handleDrop = useCallback(
+    (event: DragEvent<HTMLDivElement>) => {
+      event.preventDefault();
+      const kind = event.dataTransfer.getData(NOZZLE_DRAG_MIME);
+      if (!kind || !isNozzleKind(kind)) return;
+      const instance = rfInstanceRef.current;
+      if (!instance) return;
+
+      const flowPosition = instance.screenToFlowPosition({
+        x: event.clientX,
+        y: event.clientY,
+      });
+      const edgeId = findNearestEdgeId(flowPosition);
+      if (!edgeId) return;
+
+      placeNozzle(kind, edgeId);
+    },
+    [findNearestEdgeId, placeNozzle],
+  );
+
   const focusedService = focusedId
     ? layout.nodes.find((node) => node.service.id === focusedId)?.service
     : undefined;
 
   return (
-    <div
-      ref={containerRef}
-      role="group"
-      aria-label="System topology"
-      onKeyDown={handleKeyDown}
-      className="relative h-full w-full"
-    >
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        nodeTypes={nodeTypes}
-        nodesDraggable={false}
-        nodesConnectable={false}
-        elementsSelectable={false}
-        fitView
-        proOptions={{ hideAttribution: true }}
+    <div className="relative flex h-full w-full">
+      <div
+        ref={containerRef}
+        role="group"
+        aria-label="System topology"
+        onKeyDown={handleKeyDown}
+        className="relative flex-1"
       >
-        <Background />
-        <Controls showInteractive={false} />
-      </ReactFlow>
-      {detailsOpen && focusedService ? (
-        <NodeDetailsPanel
-          service={focusedService}
-          onClose={() => setDetailsOpen(false)}
+        <ReactFlow
+          nodes={nodes}
+          edges={edges}
+          nodeTypes={nodeTypes}
+          edgeTypes={edgeTypes}
+          nodesDraggable={false}
+          nodesConnectable={false}
+          elementsSelectable={false}
+          fitView
+          proOptions={{ hideAttribution: true }}
+          onInit={(instance) => {
+            rfInstanceRef.current = instance;
+          }}
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
+        >
+          <Background />
+          <Controls showInteractive={false} />
+        </ReactFlow>
+        {detailsOpen && focusedService ? (
+          <NodeDetailsPanel
+            service={focusedService}
+            onClose={() => setDetailsOpen(false)}
+          />
+        ) : null}
+      </div>
+
+      <NozzlePalette onRequestPlacement={(kind) => setPendingKind(kind)} />
+
+      {pendingKind ? (
+        <EdgePickerDialog
+          kind={pendingKind}
+          edges={edgeDescriptors}
+          onSelect={(edgeId) => placeNozzle(pendingKind, edgeId)}
+          onClose={() => setPendingKind(null)}
         />
       ) : null}
     </div>

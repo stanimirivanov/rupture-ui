@@ -34,6 +34,7 @@ Install and verify:
 ```powershell
 corepack enable
 pnpm install --frozen-lockfile
+pnpm format
 pnpm verify
 ```
 
