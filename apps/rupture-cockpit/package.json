@@ -1,0 +1,23 @@
+{
+  "name": "@rupture/cockpit",
+  "version": "0.0.1",
+  "private": true,
+  "imports": {
+    "#components/*": "./src/components/*.tsx",
+    "#hooks/*": "./src/hooks/*.ts",
+    "#lib/*": "./src/lib/*.ts"
+  },
+  "dependencies": {
+    "@rupture/ui-web": "workspace:*",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-router": "catalog:"
+  },
+  "nx": {
+    "tags": [
+      "type:app",
+      "scope:cockpit",
+      "platform:web"
+    ]
+  }
+}

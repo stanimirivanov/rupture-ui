@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compileOnSave": false,
+  "files": [],
+  "references": [
+    {
+      "path": "./apps/rupture-cockpit-e2e"
+    },
+    {
+      "path": "./apps/rupture-cockpit"
+    },
+    {
+      "path": "./packages/ui-web"
+    }
+  ],
+  "compilerOptions": {}
+}
