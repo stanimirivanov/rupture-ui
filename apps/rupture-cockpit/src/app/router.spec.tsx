@@ -7,11 +7,10 @@ function renderRoute(path = '/') {
   const router = createMemoryRouter(cockpitRoutes, {
     initialEntries: [path],
   });
-
   return render(<RouterProvider router={router} />);
 }
 
-describe('App', () => {
+describe('cockpit routes', () => {
   it('introduces the chaos cockpit purpose', () => {
     renderRoute();
 
@@ -36,5 +35,14 @@ describe('App', () => {
     expect(
       screen.getByRole('link', { name: 'Return to the cockpit' }),
     ).toBeTruthy();
+  });
+
+  it('renders the topology route', () => {
+    renderRoute('/topology');
+
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'System topology' }),
+    ).toBeTruthy();
+    expect(screen.getByRole('group', { name: 'System topology' })).toBeTruthy();
   });
 });

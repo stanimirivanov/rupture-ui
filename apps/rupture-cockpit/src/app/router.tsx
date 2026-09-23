@@ -1,16 +1,19 @@
 import { createBrowserRouter, type RouteObject } from 'react-router';
 
-import App from './app';
+import { CockpitLayout } from './layout';
+import { Home } from './home';
 import { NotFound } from './not-found';
+import { TopologyRoute } from '../features/canvas/components/topology-route';
 
 export const cockpitRoutes: RouteObject[] = [
   {
     path: '/',
-    Component: App,
-  },
-  {
-    path: '*',
-    Component: NotFound,
+    Component: CockpitLayout,
+    children: [
+      { index: true, Component: Home },
+      { path: 'topology', Component: TopologyRoute },
+      { path: '*', Component: NotFound },
+    ],
   },
 ];
 
