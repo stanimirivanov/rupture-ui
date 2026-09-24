@@ -16,6 +16,7 @@ import {
 export interface NozzleEdgeData extends Record<string, unknown> {
   readonly nozzle: Nozzle | null;
   readonly severity: Severity;
+  readonly isInBlastRadius: boolean;
 }
 
 export type NozzleEdge = Edge<NozzleEdgeData, 'nozzle'>;
@@ -64,6 +65,10 @@ export function NozzleEdgeComponent({
 
   const nozzle = data?.nozzle ?? null;
   const severity = data?.severity ?? 'ok';
+  const isInBlastRadius = data?.isInBlastRadius ?? false;
+
+  const stroke = isInBlastRadius ? 'var(--accent)' : SEVERITY_STROKE[severity];
+  const strokeWidth = isInBlastRadius ? 3 : undefined;
 
   return (
     <>
@@ -72,7 +77,8 @@ export function NozzleEdgeComponent({
         path={edgePath}
         className={nozzle ? SEVERITY_FLOW_CLASS[severity] : undefined}
         style={{
-          stroke: SEVERITY_STROKE[severity],
+          stroke,
+          strokeWidth,
           strokeDasharray: SEVERITY_DASH[severity],
         }}
       />

@@ -1,3 +1,5 @@
+import { Link } from 'react-router';
+
 import type { Hypothesis, NozzleKind } from '../schema/hypothesis';
 
 const KIND_LABELS: Readonly<Record<NozzleKind, string>> = {
@@ -13,15 +15,25 @@ export interface HypothesisCardProps {
    * current topology. Falls back to the raw id when the edge is unknown.
    */
   readonly edgeLabel: string;
+  /**
+   * Called before navigation when the operator chooses to preview this
+   * hypothesis' blast radius on the topology canvas.
+   */
+  readonly onSelect: (id: string) => void;
 }
 
-export function HypothesisCard({ hypothesis, edgeLabel }: HypothesisCardProps) {
+export function HypothesisCard({
+  hypothesis,
+  edgeLabel,
+  onSelect,
+}: HypothesisCardProps) {
   const kindLabel = KIND_LABELS[hypothesis.kind];
   const confidencePercent = Math.round(hypothesis.confidence * 100);
+  const titleId = `${hypothesis.id}-title`;
 
   return (
     <article
-      aria-labelledby={`${hypothesis.id}-title`}
+      aria-labelledby={titleId}
       className="rounded-xl border border-border bg-surface p-5"
     >
       <header className="flex flex-wrap items-start justify-between gap-4">
@@ -29,10 +41,7 @@ export function HypothesisCard({ hypothesis, edgeLabel }: HypothesisCardProps) {
           <p className="text-xs font-bold tracking-[0.16em] text-accent-strong uppercase">
             {kindLabel}
           </p>
-          <h2
-            id={`${hypothesis.id}-title`}
-            className="mt-1 font-display text-lg tracking-tight"
-          >
+          <h2 id={titleId} className="mt-1 font-display text-lg tracking-tight">
             {kindLabel} on {edgeLabel}
           </h2>
           <p className="mt-1 text-xs text-ink-muted">
@@ -112,6 +121,16 @@ export function HypothesisCard({ hypothesis, edgeLabel }: HypothesisCardProps) {
           ))}
         </ul>
       </section>
+      <footer className="mt-5 flex items-center justify-end">
+        <Link
+          to="/topology"
+          onClick={() => onSelect(hypothesis.id)}
+          aria-describedby={titleId}
+          className="rounded-full border border-border bg-surface-strong px-4 py-2 text-sm font-semibold text-ink transition-colors hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
+        >
+          Show on topology
+        </Link>
+      </footer>
     </article>
   );
 }

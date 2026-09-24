@@ -1,9 +1,14 @@
 import { useAtomValue } from '@effect-atom/atom-react';
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useMemo } from 'react';
 
+import {
+  selectedHypothesisAtom,
+  useClearHypothesisSelection,
+} from '../../agent/atoms/selection';
 import { viewModeAtom } from '../../spatial/atoms/view-mode';
 import { ViewModeToggle } from '../../spatial/components/view-mode-toggle';
-import { TopologyCanvas } from './topology-canvas';
+import { BlastRadiusBanner } from './blast-radius-banner';
+import { TopologyCanvas, type BlastRadius } from './topology-canvas';
 
 const SpatialView = lazy(() =>
   import('../../spatial/components/spatial-view').then((module) => ({
@@ -13,10 +18,20 @@ const SpatialView = lazy(() =>
 
 export function TopologyRoute() {
   const viewMode = useAtomValue(viewModeAtom);
+  const selectedHypothesis = useAtomValue(selectedHypothesisAtom);
+  const clearSelection = useClearHypothesisSelection();
+
+  const blastRadius = useMemo<BlastRadius | null>(() => {
+    if (!selectedHypothesis) return null;
+    return {
+      serviceIds: new Set(selectedHypothesis.blastRadius.serviceIds),
+      connectionIds: new Set(selectedHypothesis.blastRadius.connectionIds),
+    };
+  }, [selectedHypothesis]);
 
   return (
     <main id="main-content" className="flex h-full flex-col overflow-hidden">
-      <header className="flex flex-wrap items-start justify-between gap-4 border-b border-border/80 px-6 py-5 lg:px-10">
+      <header className="flex shrink-0 flex-wrap items-start justify-between gap-4 border-b border-border/80 px-6 py-5 lg:px-10">
         <div>
           <p className="text-xs font-bold tracking-[0.18em] text-accent-strong uppercase">
             M02 · Topology canvas
@@ -30,9 +45,19 @@ export function TopologyRoute() {
         </div>
         <ViewModeToggle />
       </header>
+
+      {selectedHypothesis && blastRadius ? (
+        <div className="border-b border-border/80 px-6 py-3 lg:px-10">
+          <BlastRadiusBanner
+            hypothesis={selectedHypothesis}
+            onClear={clearSelection}
+          />
+        </div>
+      ) : null}
+
       <div className="relative min-h-0 flex-1">
         {viewMode === '2d' ? (
-          <TopologyCanvas />
+          <TopologyCanvas blastRadius={blastRadius} />
         ) : (
           <Suspense
             fallback={

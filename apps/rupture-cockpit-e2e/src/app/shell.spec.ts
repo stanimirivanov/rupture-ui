@@ -42,16 +42,13 @@ test('marks the active nav link with a non-color indicator', async ({
 }) => {
   await page.goto('/agent');
 
-  const agentLink = page.getByRole('link', { name: 'Agent' });
-  const topologyLink = page.getByRole('link', { name: 'Topology' });
+  const nav = page.getByRole('navigation', { name: 'Primary' });
+  const agentLink = nav.getByRole('link', { name: 'Agent' });
+  const topologyLink = nav.getByRole('link', { name: 'Topology' });
 
   await expect(agentLink).toHaveAttribute('aria-current', 'page');
   await expect(topologyLink).not.toHaveAttribute('aria-current');
 
-  // The non-color indicator is a 2px bottom border whose colour differs
-  // between active and inactive. Asserting they differ, rather than
-  // asserting a specific colour, keeps the test independent of the token
-  // value and of the browser's CSS serialization.
   const agentBorder = await agentLink.evaluate(
     (el) => getComputedStyle(el).borderBottomColor,
   );
