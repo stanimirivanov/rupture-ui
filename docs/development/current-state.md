@@ -35,15 +35,15 @@ and no native app.
 
 ## Milestone sequence
 
-| Milestone | Outcome                                | Status      |
-| :-------- | :------------------------------------- |:------------|
-| M01       | Verified foundation                    | Complete    |
-| M02       | Topology canvas                        | Complete    |
-| M03       | Agentic proposals                      | Next        |
-| M04       | Live cockpit                           | Planned     |
-| M05       | Replay and change points               | Planned     |
-| M06       | Accessibility and visual identity pass | Planned     |
-| M07       | Demo and engine-integration handoff    | Planned     |
+| Milestone | Outcome                                | Status   |
+| :-------- | :------------------------------------- | :------- |
+| M01       | Verified foundation                    | Complete |
+| M02       | Topology canvas                        | Complete |
+| M03       | Agentic proposals                      | Next     |
+| M04       | Live cockpit                           | Planned  |
+| M05       | Replay and change points               | Planned  |
+| M06       | Accessibility and visual identity pass | Planned  |
+| M07       | Demo and engine-integration handoff    | Planned  |
 
 Milestone outcomes are defined by the Rupture core repository. This table
 maps the UI workspace's slices to those milestones; it does not define
