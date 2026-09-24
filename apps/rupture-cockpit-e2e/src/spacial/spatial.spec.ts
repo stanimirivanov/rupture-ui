@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-import { expectNoAxeViolations } from './helpers';
+import { expectNoAxeViolations } from '../helpers';
 
 test('switches between 2D and 3D views', async ({ page }) => {
   await page.goto('/topology');

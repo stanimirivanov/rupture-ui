@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-import { expectNoAxeViolations } from './helpers';
+import { expectNoAxeViolations } from '../helpers';
 
 test('places a nozzle on an edge through the palette picker', async ({
   page,

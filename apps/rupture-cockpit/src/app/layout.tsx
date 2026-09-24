@@ -34,7 +34,17 @@ export function CockpitLayout() {
           </Link>
 
           <div className="flex items-center gap-6">
-            <nav aria-label="Primary">
+            <nav aria-label="Primary" className="flex items-center gap-6">
+              <NavLink
+                to="/agent"
+                className={({ isActive }) =>
+                  isActive
+                    ? 'text-sm font-semibold text-ink'
+                    : 'text-sm font-semibold text-ink-muted hover:text-ink'
+                }
+              >
+                Agent
+              </NavLink>
               <NavLink
                 to="/topology"
                 className={({ isActive }) =>

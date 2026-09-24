@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-import { expectNoAxeViolations } from './helpers';
+import { expectNoAxeViolations } from '../helpers';
 
 test('presents the cockpit shell foundation', async ({ page }) => {
   await page.goto('/');

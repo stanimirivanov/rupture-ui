@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-import { expectNoAxeViolations } from './helpers';
+import { expectNoAxeViolations } from '../helpers';
 
 test('adjusts a nozzle dial and updates the wire severity signal', async ({
   page,

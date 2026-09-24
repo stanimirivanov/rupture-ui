@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-import { expectNoAxeViolations } from './helpers';
+import { expectNoAxeViolations } from '../helpers';
 
 test('renders the topology canvas', async ({ page }) => {
   await page.goto('/topology');
