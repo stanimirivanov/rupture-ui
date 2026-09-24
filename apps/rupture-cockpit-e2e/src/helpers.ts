@@ -30,3 +30,12 @@ export function requireBox(box: Box | null): Box {
   }
   return box;
 }
+
+/**
+ * The single source of truth for the header's primary navigation.
+ * Scoping nav assertions to this landmark avoids strict-mode violations
+ * when link text (e.g. "Topology") is duplicated elsewhere on the page.
+ */
+export function primaryNav(page: Page) {
+  return page.getByRole('navigation', { name: 'Primary' });
+}

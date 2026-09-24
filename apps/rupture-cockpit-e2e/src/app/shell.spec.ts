@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-import { expectNoAxeViolations, requireBox } from '../helpers';
+import { expectNoAxeViolations, primaryNav, requireBox } from '../helpers';
 
 test('presents the cockpit shell foundation', async ({ page }) => {
   await page.goto('/');
@@ -33,7 +33,7 @@ test('offers a recovery path for an unknown route', async ({ page }) => {
 
 test('navigates to the topology from the header', async ({ page }) => {
   await page.goto('/');
-  await page.getByRole('link', { name: 'Topology' }).click();
+  await primaryNav(page).getByRole('link', { name: 'Topology' }).click();
   await expect(page).toHaveURL(/\/topology$/);
 });
 
@@ -42,7 +42,7 @@ test('marks the active nav link with a non-color indicator', async ({
 }) => {
   await page.goto('/agent');
 
-  const nav = page.getByRole('navigation', { name: 'Primary' });
+  const nav = primaryNav(page);
   const agentLink = nav.getByRole('link', { name: 'Agent' });
   const topologyLink = nav.getByRole('link', { name: 'Topology' });
 
@@ -61,7 +61,7 @@ test('marks the active nav link with a non-color indicator', async ({
 test('shows a visible focus ring on nav links', async ({ page }) => {
   await page.goto('/');
 
-  const agentLink = page.getByRole('link', { name: 'Agent' });
+  const agentLink = primaryNav(page).getByRole('link', { name: 'Agent' });
   await agentLink.focus();
   await expect(agentLink).toBeFocused();
 
@@ -79,13 +79,14 @@ test('keeps primary navigation usable at a narrow viewport', async ({
   await page.setViewportSize({ width: 375, height: 812 });
   await page.goto('/');
 
-  await expect(page.getByRole('navigation', { name: 'Primary' })).toBeVisible();
-  await expect(page.getByRole('link', { name: 'Agent' })).toBeVisible();
-  await expect(page.getByRole('link', { name: 'Topology' })).toBeVisible();
+  const nav = primaryNav(page);
+  await expect(nav).toBeVisible();
+  await expect(nav.getByRole('link', { name: 'Agent' })).toBeVisible();
+  await expect(nav.getByRole('link', { name: 'Topology' })).toBeVisible();
 
-  await page.getByRole('link', { name: 'Agent' }).click();
+  await nav.getByRole('link', { name: 'Agent' }).click();
   await expect(page).toHaveURL(/\/agent$/);
-  await expect(page.getByRole('link', { name: 'Agent' })).toHaveAttribute(
+  await expect(nav.getByRole('link', { name: 'Agent' })).toHaveAttribute(
     'aria-current',
     'page',
   );
@@ -98,7 +99,7 @@ test('keeps the header fixed and scrolls only the content', async ({
 }) => {
   await page.goto('/agent');
 
-  const headerNav = page.getByRole('navigation', { name: 'Primary' });
+  const headerNav = primaryNav(page);
   const agentNavBox = requireBox(await headerNav.boundingBox());
   expect(agentNavBox).not.toBeNull();
 
