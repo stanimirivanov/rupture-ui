@@ -35,21 +35,50 @@ and no native app.
 
 ## Milestone sequence
 
-| Milestone | Outcome                                | Status   |
-| :-------- | :------------------------------------- | :------- |
-| M01       | Verified foundation                    | Complete |
-| M02       | Topology canvas                        | Next     |
-| M03       | Agentic proposals                      | Planned  |
-| M04       | Live cockpit                           | Planned  |
-| M05       | Replay and change points               | Planned  |
-| M06       | Accessibility and visual identity pass | Planned  |
-| M07       | Demo and engine-integration handoff    | Planned  |
+| Milestone | Outcome                                | Status      |
+| :-------- | :------------------------------------- |:------------|
+| M01       | Verified foundation                    | Complete    |
+| M02       | Topology canvas                        | Complete    |
+| M03       | Agentic proposals                      | Next        |
+| M04       | Live cockpit                           | Planned     |
+| M05       | Replay and change points               | Planned     |
+| M06       | Accessibility and visual identity pass | Planned     |
+| M07       | Demo and engine-integration handoff    | Planned     |
 
 Milestone outcomes are defined by the Rupture core repository. This table
 maps the UI workspace's slices to those milestones; it does not define
 product scope.
 
-## Next slice: M02 - Topology canvas
+## Next slice: M03 - Agentic proposals
+
+M03 introduces the agent hypothesis feed: proposals the agent generates
+from telemetry, with a reasoning chain, a confidence score, and a
+blast-radius preview. It is the first milestone that consumes data the
+UI did not author, so it is where Effect Schema decoding enters
+(ADR 0004).
+
+M03 is delivered as five independently reviewable sub-slices, in this
+order:
+
+1. Hypothesis feed: render proposals from a decoded fixture.
+2. Blast-radius highlighting on the topology canvas.
+3. Autonomy dial (Suggest / Approve / Auto), session state only.
+4. Approve, Edit, and Intercept gates wired to the mock server.
+5. Pause triggers and mid-run intervention.
+
+### Data strategy for M03
+
+M03 fixtures are decoded through Effect Schema, unlike M02's plain typed
+constant. The decoder is the contract the mock server implements and the
+real engine will satisfy. A malformed fixture fails the same way a
+malformed server response will; the failure UI is designed alongside the
+success UI.
+
+The mock server enters at M03 sub-slice 4, when the first mutation
+(approve/intercept) requires a request/response boundary. Slices 1–3
+consume static fixtures through the same schema.
+
+## M02 - Topology canvas
 
 M02 renders the mock system topology, places fault-injection nozzles on
 wires, and verifies the interaction with keyboard-only Playwright coverage.
