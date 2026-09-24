@@ -15,7 +15,7 @@ export function TopologyRoute() {
   const viewMode = useAtomValue(viewModeAtom);
 
   return (
-    <main id="main-content" className="flex flex-1 flex-col overflow-hidden">
+    <main id="main-content" className="flex h-full flex-col overflow-hidden">
       <header className="flex flex-wrap items-start justify-between gap-4 border-b border-border/80 px-6 py-5 lg:px-10">
         <div>
           <p className="text-xs font-bold tracking-[0.18em] text-accent-strong uppercase">

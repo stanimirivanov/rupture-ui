@@ -2,7 +2,11 @@ import { HypothesisFeed } from './hypothesis-feed';
 
 export function AgentRoute() {
   return (
-    <main id="main-content" className="flex-1">
+    <main
+      id="main-content"
+      tabIndex={0}
+      className="h-full overflow-y-auto [scrollbar-gutter:stable] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent"
+    >
       <header className="border-b border-border/80 px-6 py-5 lg:px-10">
         <p className="text-xs font-bold tracking-[0.18em] text-accent-strong uppercase">
           M03 · Agentic proposals

@@ -23,7 +23,10 @@ const principles = [
 
 export function Home() {
   return (
-    <main id="main-content">
+    <main
+      id="main-content"
+      className="h-full overflow-y-auto [scrollbar-gutter:stable]"
+    >
       <section className="mx-auto grid max-w-7xl gap-12 px-6 py-20 lg:grid-cols-[1.3fr_0.7fr] lg:px-10 lg:py-28">
         <div className="max-w-3xl">
           <p className="mb-6 flex items-center gap-3 text-sm font-bold tracking-[0.18em] text-accent-strong uppercase">

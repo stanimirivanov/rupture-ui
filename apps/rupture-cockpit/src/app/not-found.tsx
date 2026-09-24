@@ -5,7 +5,7 @@ export function NotFound() {
   return (
     <main
       id="main-content"
-      className="grid flex-1 place-items-center px-6 py-24 text-center"
+      className="grid h-full place-items-center overflow-y-auto px-6 py-24 text-center"
     >
       <div>
         <p className="text-sm font-bold tracking-[0.18em] text-accent-strong uppercase">

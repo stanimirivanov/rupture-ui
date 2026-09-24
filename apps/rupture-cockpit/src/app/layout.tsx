@@ -1,8 +1,16 @@
 import { Link, NavLink, Outlet } from 'react-router';
 
+const NAV_LINK_BASE =
+  'rounded-sm border-b-2 px-3 py-2 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-canvas';
+
+const navLinkClassName = ({ isActive }: { isActive: boolean }): string =>
+  isActive
+    ? `${NAV_LINK_BASE} border-accent text-ink`
+    : `${NAV_LINK_BASE} border-transparent text-ink-muted hover:text-ink`;
+
 export function CockpitLayout() {
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex h-screen flex-col overflow-hidden">
       <a
         href="#main-content"
         className="sr-only z-50 rounded-md bg-ink px-4 py-2 text-black focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
@@ -10,8 +18,8 @@ export function CockpitLayout() {
         Skip to main content
       </a>
 
-      <header className="border-b border-border/80 bg-surface/70 backdrop-blur-md">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5 lg:px-10">
+      <header className="shrink-0 border-b border-border/80 bg-surface/70 backdrop-blur-md">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-x-6 gap-y-2 px-6 py-4 lg:px-10">
           <Link
             className="flex items-center gap-3"
             to="/"
@@ -33,26 +41,12 @@ export function CockpitLayout() {
             </span>
           </Link>
 
-          <div className="flex items-center gap-6">
-            <nav aria-label="Primary" className="flex items-center gap-6">
-              <NavLink
-                to="/agent"
-                className={({ isActive }) =>
-                  isActive
-                    ? 'text-sm font-semibold text-ink'
-                    : 'text-sm font-semibold text-ink-muted hover:text-ink'
-                }
-              >
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+            <nav aria-label="Primary" className="flex items-center gap-1">
+              <NavLink to="/agent" className={navLinkClassName}>
                 Agent
               </NavLink>
-              <NavLink
-                to="/topology"
-                className={({ isActive }) =>
-                  isActive
-                    ? 'text-sm font-semibold text-ink'
-                    : 'text-sm font-semibold text-ink-muted hover:text-ink'
-                }
-              >
+              <NavLink to="/topology" className={navLinkClassName}>
                 Topology
               </NavLink>
             </nav>
@@ -63,13 +57,19 @@ export function CockpitLayout() {
         </div>
       </header>
 
-      <div className="flex flex-1 flex-col">
+      {/* Scrollable content region. `min-h-0` lets this flex item shrink
+          below its content size; `flex-1` makes it take the remaining
+          height. Each route decides whether to scroll internally or to
+          fill the region. */}
+      <div className="min-h-0 flex-1">
         <Outlet />
       </div>
 
-      <footer className="mx-auto flex w-full max-w-7xl flex-col gap-2 px-6 py-8 text-xs text-ink-muted sm:flex-row sm:items-center sm:justify-between lg:px-10">
-        <p>Rupture resilience engineering.</p>
-        <p>M02 · Topology canvas</p>
+      <footer className="shrink-0 border-t border-border/80">
+        <div className="mx-auto flex max-w-7xl flex-col gap-2 px-6 py-4 text-xs text-ink-muted sm:flex-row sm:items-center sm:justify-between lg:px-10">
+          <p>Rupture resilience engineering.</p>
+          <p>M02 · Topology canvas</p>
+        </div>
       </footer>
     </div>
   );
