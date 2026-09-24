@@ -149,3 +149,52 @@ test('keeps the blast radius banner accessible at narrow width', async ({
 
   await expectNoAxeViolations(page);
 });
+
+test('defaults autonomy to Approve and never to Auto', async ({ page }) => {
+  await page.goto('/agent');
+
+  const approve = page.getByRole('radio', { name: /Approve/ });
+  const auto = page.getByRole('radio', { name: /Auto/ });
+  const suggest = page.getByRole('radio', { name: /Suggest/ });
+
+  await expect(approve).toBeChecked();
+  await expect(auto).not.toBeChecked();
+  await expect(suggest).not.toBeChecked();
+});
+
+test('switches autonomy mode and announces the change', async ({ page }) => {
+  await page.goto('/agent');
+
+  await page.getByRole('radio', { name: /Auto/ }).check();
+
+  await expect(page.getByRole('radio', { name: /Auto/ })).toBeChecked();
+  await expect(page.getByRole('status')).toHaveText('Autonomy mode: Auto.');
+});
+
+test('does not persist autonomy mode across a reload', async ({ page }) => {
+  await page.goto('/agent');
+
+  await page.getByRole('radio', { name: /Auto/ }).check();
+  await expect(page.getByRole('radio', { name: /Auto/ })).toBeChecked();
+
+  await page.reload();
+
+  await expect(page.getByRole('radio', { name: /Approve/ })).toBeChecked();
+  await expect(page.getByRole('radio', { name: /Auto/ })).not.toBeChecked();
+});
+
+test('is operable keyboard-only', async ({ page }) => {
+  await page.goto('/agent');
+
+  const approve = page.getByRole('radio', { name: /Approve/ });
+  await approve.focus();
+  await expect(approve).toBeFocused();
+
+  await page.keyboard.press('ArrowDown');
+  await expect(page.getByRole('radio', { name: /Auto/ })).toBeChecked();
+
+  await page.keyboard.press('ArrowUp');
+  await expect(page.getByRole('radio', { name: /Approve/ })).toBeChecked();
+
+  await expectNoAxeViolations(page);
+});

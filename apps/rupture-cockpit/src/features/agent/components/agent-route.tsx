@@ -1,3 +1,4 @@
+import { AutonomyDial } from './autonomy-dial';
 import { HypothesisFeed } from './hypothesis-feed';
 
 export function AgentRoute() {
@@ -19,8 +20,11 @@ export function AgentRoute() {
           arrives in a later slice.
         </p>
       </header>
-      <div className="mx-auto max-w-4xl px-6 py-8 lg:px-10">
+      <div className="mx-auto grid max-w-6xl gap-8 px-6 py-8 lg:grid-cols-[1fr_20rem] lg:px-10">
         <HypothesisFeed />
+        <aside aria-label="Autonomy">
+          <AutonomyDial />
+        </aside>
       </div>
     </main>
   );
