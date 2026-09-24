@@ -1,0 +1,79 @@
+/**
+ * Raw agent fixture. Typed `unknown` deliberately: the fixture is decoded
+ * through `HypothesisListSchema` at the boundary, exactly as a server
+ * response will be. A malformed fixture fails the same way a malformed
+ * response will.
+ */
+export const rawHypothesesFixture: unknown = [
+  {
+    id: 'hyp-checkout-latency',
+    kind: 'latency',
+    edgeId: 'gw-checkout',
+    proposedStrength: 55,
+    confidence: 0.72,
+    reasoning: [
+      {
+        id: 'r1',
+        text: 'p99 latency on the checkout service tripled over the last hour.',
+      },
+      {
+        id: 'r2',
+        text: 'The increase correlates with the checkout-to-payments call, not with inbound gateway traffic.',
+        evidence: 'trace-4f1a9c',
+      },
+      {
+        id: 'r3',
+        text: 'Proposing a controlled latency injection on the gateway-to-checkout edge to reproduce.',
+      },
+    ],
+    blastRadius: {
+      serviceIds: ['checkout', 'payments'],
+      connectionIds: ['gw-checkout', 'checkout-payments'],
+    },
+    createdAt: '2026-09-24T08:00:00.000Z',
+  },
+  {
+    id: 'hyp-inventory-drops',
+    kind: 'packet-drop',
+    edgeId: 'gw-inventory',
+    proposedStrength: 25,
+    confidence: 0.48,
+    reasoning: [
+      {
+        id: 'r1',
+        text: 'Inventory reads show intermittent failures with no corresponding upstream errors.',
+      },
+      {
+        id: 'r2',
+        text: 'The pattern is consistent with transient packet loss on the gateway-to-inventory path.',
+      },
+    ],
+    blastRadius: {
+      serviceIds: ['inventory'],
+      connectionIds: ['gw-inventory'],
+    },
+    createdAt: '2026-09-24T07:42:00.000Z',
+  },
+  {
+    id: 'hyp-checkout-cpu',
+    kind: 'cpu',
+    edgeId: 'checkout-payments',
+    proposedStrength: 70,
+    confidence: 0.31,
+    reasoning: [
+      {
+        id: 'r1',
+        text: 'CPU saturation on payments is a plausible contributor to the latency increase.',
+      },
+      {
+        id: 'r2',
+        text: 'Confidence is limited because the payments service already runs near capacity in normal conditions.',
+      },
+    ],
+    blastRadius: {
+      serviceIds: ['payments'],
+      connectionIds: ['checkout-payments'],
+    },
+    createdAt: '2026-09-24T07:15:00.000Z',
+  },
+];

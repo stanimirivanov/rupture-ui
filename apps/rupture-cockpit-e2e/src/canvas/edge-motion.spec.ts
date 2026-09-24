@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-import { expectNoAxeViolations } from './helpers';
+import { expectNoAxeViolations } from '../helpers';
 
 test('animates edge flow only after a nozzle is placed', async ({ page }) => {
   await page.goto('/topology');
