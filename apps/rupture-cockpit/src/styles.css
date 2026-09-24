@@ -37,8 +37,10 @@
   --severity-critical: #e5484d;
 }
 
-* {
-  border-color: var(--border);
+@layer base {
+  * {
+    border-color: var(--border);
+  }
 }
 
 html {
@@ -68,7 +70,7 @@ a {
 
 @media (prefers-reduced-motion: reduce) {
   html {
-    scroll-behavior: auto;
+    scroll-behavior: smooth;
   }
 }
 
