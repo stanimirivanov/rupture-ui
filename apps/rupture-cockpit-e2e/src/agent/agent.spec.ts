@@ -69,3 +69,83 @@ test('navigates to the agent feed from the header', async ({ page }) => {
   await page.getByRole('link', { name: 'Agent' }).click();
   await expect(page).toHaveURL(/\/agent$/);
 });
+
+test('highlights the selected hypothesis blast radius on the topology', async ({
+  page,
+}) => {
+  await page.goto('/agent');
+
+  const firstCard = page.getByRole('article', {
+    name: /Latency Injector on API Gateway to Checkout/,
+  });
+  await firstCard.getByRole('link', { name: 'Show on topology' }).click();
+
+  await expect(page).toHaveURL(/\/topology$/);
+
+  const banner = page.getByRole('region', {
+    name: /Blast radius preview/,
+  });
+  await expect(banner).toBeVisible();
+  await expect(banner).toContainText('Latency Injector');
+
+  // The blast radius for the first fixture hypothesis includes checkout,
+  // payments, gw-checkout, and checkout-payments.
+  await expect(
+    page.locator('[data-service-node="checkout"][data-in-blast-radius="true"]'),
+  ).toBeVisible();
+  await expect(
+    page.locator('[data-service-node="payments"][data-in-blast-radius="true"]'),
+  ).toBeVisible();
+  await expect(
+    page.locator('[data-service-node="gateway"][data-in-blast-radius="true"]'),
+  ).toHaveCount(0);
+
+  // The aria-label carries the non-color signal for screen readers.
+  await expect(
+    page.getByRole('button', { name: 'Checkout, in blast radius' }),
+  ).toBeVisible();
+
+  await expectNoAxeViolations(page);
+});
+
+test('clears the blast radius highlight', async ({ page }) => {
+  await page.goto('/agent');
+  await page
+    .getByRole('article', {
+      name: /Latency Injector on API Gateway to Checkout/,
+    })
+    .getByRole('link', { name: 'Show on topology' })
+    .click();
+  await expect(page).toHaveURL(/\/topology$/);
+
+  await page.getByRole('button', { name: 'Clear' }).click();
+
+  await expect(
+    page.getByRole('region', { name: /Blast radius preview/ }),
+  ).toHaveCount(0);
+  await expect(
+    page.locator('[data-service-node="checkout"][data-in-blast-radius="true"]'),
+  ).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Checkout' })).toBeVisible();
+});
+
+test('keeps the blast radius banner accessible at narrow width', async ({
+  page,
+}) => {
+  await page.goto('/agent');
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page
+    .getByRole('article', {
+      name: /Latency Injector on API Gateway to Checkout/,
+    })
+    .getByRole('link', { name: 'Show on topology' })
+    .click();
+  await expect(page).toHaveURL(/\/topology$/);
+
+  await expect(
+    page.getByRole('region', { name: /Blast radius preview/ }),
+  ).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Clear' })).toBeVisible();
+
+  await expectNoAxeViolations(page);
+});

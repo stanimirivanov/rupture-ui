@@ -53,7 +53,16 @@ const edgeTypes: EdgeTypes = { nozzle: NozzleEdgeComponent };
 
 const EDGE_DROP_THRESHOLD = 80;
 
-export function TopologyCanvas() {
+export interface BlastRadius {
+  readonly serviceIds: ReadonlySet<string>;
+  readonly connectionIds: ReadonlySet<string>;
+}
+
+export interface TopologyCanvasProps {
+  readonly blastRadius: BlastRadius | null;
+}
+
+export function TopologyCanvas({ blastRadius }: TopologyCanvasProps) {
   const layout = useAtomValue(laidOutTopologyAtom);
   const order = useAtomValue(focusOrderAtom);
   const tabStopId = useAtomValue(tabStopNodeIdAtom);
@@ -108,12 +117,13 @@ export function TopologyCanvas() {
           label: service.label,
           isTabStop: service.id === tabStopId,
           onFocus: handleNodeFocus,
+          isInBlastRadius: blastRadius?.serviceIds.has(service.id) ?? false,
         },
         draggable: false,
         connectable: false,
         selectable: false,
       })),
-    [layout.nodes, tabStopId, handleNodeFocus],
+    [layout.nodes, tabStopId, handleNodeFocus, blastRadius],
   );
 
   const edges: NozzleEdge[] = useMemo(
@@ -126,10 +136,12 @@ export function TopologyCanvas() {
         data: {
           nozzle: nozzlesByEdge.get(connection.id) ?? null,
           severity: severities.get(connection.id) ?? 'ok',
+          isInBlastRadius:
+            blastRadius?.connectionIds.has(connection.id) ?? false,
         },
         selectable: false,
       })),
-    [layout.edges, nozzlesByEdge, severities],
+    [layout.edges, nozzlesByEdge, severities, blastRadius],
   );
 
   const focusNode = useCallback((id: string) => {

@@ -1,13 +1,15 @@
-import { useAtomValue } from '@effect-atom/atom-react';
+import { useAtomValue, useAtomSet } from '@effect-atom/atom-react';
 import { useMemo } from 'react';
 
 import { laidOutTopologyAtom } from '../../canvas/atoms/topology';
 import { hypothesesAtom } from '../atoms/hypotheses';
+import { selectedHypothesisIdAtom } from '../atoms/selection';
 import { HypothesisCard } from './hypothesis-card';
 
 export function HypothesisFeed() {
   const result = useAtomValue(hypothesesAtom);
   const layout = useAtomValue(laidOutTopologyAtom);
+  const setSelectedId = useAtomSet(selectedHypothesisIdAtom);
 
   const edgeLabels = useMemo(() => {
     const byServiceId = new Map(
@@ -57,6 +59,7 @@ export function HypothesisFeed() {
           <HypothesisCard
             hypothesis={hypothesis}
             edgeLabel={edgeLabels.get(hypothesis.edgeId) ?? hypothesis.edgeId}
+            onSelect={setSelectedId}
           />
         </li>
       ))}
