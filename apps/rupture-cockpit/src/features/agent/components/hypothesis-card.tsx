@@ -1,4 +1,5 @@
-import { Link } from 'react-router';
+import type { AutonomyMode } from '../atoms/autonomy';
+import { ActionButtons } from './action-buttons';
 
 import type { Hypothesis, NozzleKind } from '../schema/hypothesis';
 
@@ -15,17 +16,21 @@ export interface HypothesisCardProps {
    * current topology. Falls back to the raw id when the edge is unknown.
    */
   readonly edgeLabel: string;
+  readonly mode: AutonomyMode;
   /**
    * Called before navigation when the operator chooses to preview this
    * hypothesis' blast radius on the topology canvas.
    */
   readonly onSelect: (id: string) => void;
+  readonly onEdit: (hypothesis: Hypothesis) => void;
 }
 
 export function HypothesisCard({
   hypothesis,
   edgeLabel,
+  mode,
   onSelect,
+  onEdit,
 }: HypothesisCardProps) {
   const kindLabel = KIND_LABELS[hypothesis.kind];
   const confidencePercent = Math.round(hypothesis.confidence * 100);
@@ -121,15 +126,8 @@ export function HypothesisCard({
           ))}
         </ul>
       </section>
-      <footer className="mt-5 flex items-center justify-end">
-        <Link
-          to="/topology"
-          onClick={() => onSelect(hypothesis.id)}
-          aria-describedby={titleId}
-          className="rounded-full border border-border bg-surface-strong px-4 py-2 text-sm font-semibold text-ink transition-colors hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
-        >
-          Show on topology
-        </Link>
+      <footer className="mt-5">
+        <ActionButtons hypothesis={hypothesis} mode={mode} onEdit={onEdit} />
       </footer>
     </article>
   );

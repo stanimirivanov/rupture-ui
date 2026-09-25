@@ -30,12 +30,26 @@ export default defineConfig({
     trace: 'on-first-retry',
   },
   /* Run your local dev server before starting the tests */
-  webServer: {
-    command: 'pnpm exec nx run @rupture/cockpit:preview',
-    url: 'http://localhost:4300',
-    reuseExistingServer: true,
-    cwd: workspaceRoot,
-  },
+  webServer: [
+    {
+      command: 'pnpm exec nx run @rupture/cockpit:mock-server',
+      url: 'http://localhost:4301/api/hypotheses',
+      // Always restart so the in-memory fixture resets between runs.
+      // An edit in one e2e test would otherwise leak into the next.
+      reuseExistingServer: false,
+      cwd: workspaceRoot,
+    },
+    {
+      command: 'pnpm exec nx run @rupture/cockpit:preview',
+      url: 'http://localhost:4300',
+      reuseExistingServer: true,
+      cwd: workspaceRoot,
+      env: {
+        // Point the preview build at the mock server running on port 4301.
+        VITE_API_BASE_URL: 'http://localhost:4301/api',
+      },
+    },
+  ],
   projects: [
     {
       name: 'chromium',

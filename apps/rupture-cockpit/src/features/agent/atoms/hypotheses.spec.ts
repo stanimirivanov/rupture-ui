@@ -1,46 +1,48 @@
 import { Registry } from '@effect-atom/atom-react';
 
-import { rawHypothesesFixture } from '../fixtures/hypotheses';
-import { hypothesesAtom, rawHypothesesAtom } from './hypotheses';
+import { hypothesesAtom, hypothesesFetchTriggerAtom } from './hypotheses';
 
 describe('hypothesesAtom', () => {
-  it('decodes the shipped fixture without error', () => {
+  it('starts in the loading state', () => {
     const registry = Registry.make();
-    const result = registry.get(hypothesesAtom);
-    expect(result.kind).toBe('success');
+    expect(registry.get(hypothesesAtom)).toEqual({ kind: 'loading' });
   });
 
-  it('returns one hypothesis per fixture entry', () => {
+  it('reflects a value written by the fetch runner', () => {
     const registry = Registry.make();
-    const result = registry.get(hypothesesAtom);
-    if (result.kind !== 'success') throw new Error('expected success');
-    expect(result.hypotheses.length).toBe(
-      (rawHypothesesFixture as readonly unknown[]).length,
-    );
+    registry.set(hypothesesAtom, {
+      kind: 'success',
+      hypotheses: [],
+    });
+    expect(registry.get(hypothesesAtom)).toEqual({
+      kind: 'success',
+      hypotheses: [],
+    });
   });
 
-  it('returns invalid-message for a malformed payload', () => {
+  it('reflects a decode failure written by the fetch runner', () => {
     const registry = Registry.make();
-    registry.set(rawHypothesesAtom, { not: 'an array' });
-    const result = registry.get(hypothesesAtom);
-    expect(result.kind).toBe('invalid-message');
+    registry.set(hypothesesAtom, {
+      kind: 'invalid-message',
+      message: 'bad payload',
+    });
+    expect(registry.get(hypothesesAtom)).toEqual({
+      kind: 'invalid-message',
+      message: 'bad payload',
+    });
+  });
+});
+
+describe('hypothesesFetchTriggerAtom', () => {
+  it('starts at zero', () => {
+    const registry = Registry.make();
+    expect(registry.get(hypothesesFetchTriggerAtom)).toBe(0);
   });
 
-  it('returns invalid-message when a hypothesis has an unknown kind', () => {
+  it('can be incremented to trigger a refetch', () => {
     const registry = Registry.make();
-    registry.set(rawHypothesesAtom, [
-      {
-        id: 'x',
-        kind: 'memory',
-        edgeId: 'e',
-        proposedStrength: 10,
-        confidence: 0.5,
-        reasoning: [{ id: 'r', text: 't' }],
-        blastRadius: { serviceIds: [], connectionIds: [] },
-        createdAt: '2026-09-24T00:00:00.000Z',
-      },
-    ]);
-    const result = registry.get(hypothesesAtom);
-    expect(result.kind).toBe('invalid-message');
+    const current = registry.get(hypothesesFetchTriggerAtom);
+    registry.set(hypothesesFetchTriggerAtom, current + 1);
+    expect(registry.get(hypothesesFetchTriggerAtom)).toBe(1);
   });
 });

@@ -1,36 +1,24 @@
 import { Atom } from '@effect-atom/atom-react';
-import * as Either from 'effect/Either';
-import * as Schema from 'effect/Schema';
 
-import { rawHypothesesFixture } from '../fixtures/hypotheses';
-import { HypothesisListSchema, type Hypothesis } from '../schema/hypothesis';
-
-/** Source atom: raw agent payload, before decoding. */
-export const rawHypothesesAtom = Atom.make<unknown>(rawHypothesesFixture);
-
-export interface HypothesesDecodeFailure {
-  readonly kind: 'invalid-message';
-  readonly message: string;
-}
+import type { Hypothesis } from '../schema/hypothesis';
 
 export type HypothesesResult =
+  | { readonly kind: 'loading' }
   | { readonly kind: 'success'; readonly hypotheses: readonly Hypothesis[] }
-  | HypothesesDecodeFailure;
+  | { readonly kind: 'invalid-message'; readonly message: string }
+  | { readonly kind: 'network'; readonly message: string }
+  | { readonly kind: 'authorization'; readonly message: string };
 
 /**
- * Derived atom: decode the raw payload through the schema. Returns a
- * discriminated result so the UI can branch exhaustively without try/catch.
- * Nothing downstream sees `unknown`.
+ * Source atom: the current feed state. Starts in `loading`; the component
+ * that consumes it runs `fetchHypotheses` and writes the resolved result
+ * back through this atom. There is no fetch inside the atom because a
+ * derived atom is synchronous and `fetch` is not.
  */
-export const hypothesesAtom = Atom.make((get): HypothesesResult => {
-  const raw = get(rawHypothesesAtom);
-  const decoded = Schema.decodeUnknownEither(HypothesisListSchema)(raw);
+export const hypothesesAtom = Atom.make<HypothesesResult>({ kind: 'loading' });
 
-  return Either.match(decoded, {
-    onRight: (hypotheses) => ({ kind: 'success' as const, hypotheses }),
-    onLeft: (error) => ({
-      kind: 'invalid-message' as const,
-      message: String(error),
-    }),
-  });
-});
+/**
+ * Increment to request a refetch. The consuming component observes it in
+ * a `useEffect` dependency array.
+ */
+export const hypothesesFetchTriggerAtom = Atom.make(0);

@@ -49,7 +49,8 @@ html {
 
 body {
   min-width: 320px;
-  min-height: 100vh;
+  height: 100%;
+  overflow: hidden;
   margin: 0;
   background:
     radial-gradient(circle at 85% 0%, rgb(232 176 75 / 8%), transparent 26rem),

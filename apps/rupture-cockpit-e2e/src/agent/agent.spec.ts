@@ -198,3 +198,68 @@ test('is operable keyboard-only', async ({ page }) => {
 
   await expectNoAxeViolations(page);
 });
+
+test('approves a proposal and refetches the feed', async ({ page }) => {
+  await page.goto('/agent');
+
+  await page.getByRole('radio', { name: /Approve/ }).check();
+
+  const firstCard = page.getByRole('article', {
+    name: /Latency Injector on API Gateway to Checkout/,
+  });
+  await firstCard.getByRole('button', { name: 'Approve' }).click();
+
+  await expect(firstCard.getByRole('status')).toContainText('Action recorded');
+});
+
+test('edits the proposed strength before approving', async ({ page }) => {
+  await page.goto('/agent');
+
+  await page.getByRole('radio', { name: /Approve/ }).check();
+
+  const firstCard = page.getByRole('article', {
+    name: /Latency Injector on API Gateway to Checkout/,
+  });
+  await firstCard.getByRole('button', { name: 'Edit' }).click();
+
+  const dialog = page.getByRole('dialog', { name: 'Edit proposed strength' });
+  await expect(dialog).toBeVisible();
+  const slider = dialog.getByRole('slider', { name: 'Strength' });
+  await slider.fill('20');
+  await dialog.getByRole('button', { name: 'Save and approve' }).click();
+
+  await expect(dialog).toBeHidden();
+  await expect(firstCard.getByRole('status')).toContainText('Action recorded');
+});
+
+test('intercepts an auto-launched action', async ({ page }) => {
+  await page.goto('/agent');
+
+  await page.getByRole('radio', { name: /Auto/ }).check();
+
+  const firstCard = page.getByRole('article', {
+    name: /Latency Injector on API Gateway to Checkout/,
+  });
+  await firstCard.getByRole('button', { name: 'Intercept' }).click();
+
+  await expect(firstCard.getByRole('status')).toContainText('Action recorded');
+
+  await expectNoAxeViolations(page);
+});
+
+test('Suggest mode shows no action buttons', async ({ page }) => {
+  await page.goto('/agent');
+  await page.getByRole('radio', { name: /Suggest/ }).check();
+
+  const firstCard = page.getByRole('article', {
+    name: /Latency Injector on API Gateway to Checkout/,
+  });
+
+  await expect(firstCard.getByRole('button', { name: 'Approve' })).toHaveCount(
+    0,
+  );
+  await expect(
+    firstCard.getByRole('button', { name: 'Intercept' }),
+  ).toHaveCount(0);
+  await expect(firstCard.getByRole('button', { name: 'Edit' })).toHaveCount(0);
+});
