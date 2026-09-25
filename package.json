@@ -8,7 +8,7 @@
     "pnpm": "11.16.0"
   },
   "scripts": {
-    "dev": "nx dev @rupture/cockpit",
+    "dev": "nx run-many -t dev mock-server -p @rupture/cockpit --parallel",
     "build": "nx build @rupture/cockpit",
     "format": "nx format:write",
     "format:check": "nx format:check",
@@ -16,6 +16,7 @@
     "typecheck": "nx run-many -t typecheck",
     "test": "nx run-many -t test",
     "e2e": "nx e2e @rupture/cockpit-e2e",
+    "e2e:headed": "nx e2e @rupture/cockpit-e2e -- --headed",
     "verify": "pnpm format:check && pnpm nx run-many -t lint typecheck test build && pnpm e2e"
   },
   "private": true,
